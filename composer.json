@@ -1,0 +1,39 @@
+{
+    "name": "spotteredu/laravel-multi-saml2",
+    "description": "A Laravel package for Saml2 integration as a SP (service provider) for multiple IDPs using subdomains based on OneLogin toolkit.",
+    "keywords": ["laravel","saml", "saml2", "subdomain", "onelogin"],
+    "homepage": "https://github.com/spotteredu/laravel-saml2",
+    "license": "MIT",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Chris Anderson",
+            "email": "chris@spotteredu.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-openssl": "*",
+        "illuminate/support": ">=5.0.0",
+        "onelogin/php-saml": "^2.10"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Spotter\\Saml2\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Spotter\\Saml2\\Saml2ServiceProvider"
+            ],
+            "aliases": {
+                "Saml2": "Spotter\\Saml2\\Facades\\Saml2Auth"
+            }
+        }
+    },
+    "minimum-stability": "stable"
+}
