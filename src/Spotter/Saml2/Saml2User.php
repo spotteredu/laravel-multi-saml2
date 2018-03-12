@@ -4,14 +4,8 @@ namespace Spotter\Saml2;
 
 use OneLogin_Saml2_Auth;
 
-/**
- * A simple class that represents the user that 'came' inside the saml2 assertion
- * Class Saml2User
- * @package Aacotroneo\Saml2
- */
 class Saml2User
 {
-
     protected $auth;
 
     function __construct(OneLogin_Saml2_Auth $auth)
@@ -24,10 +18,7 @@ class Saml2User
      */
     function getUserId()
     {
-        $auth = $this->auth;
-
-        return $auth->getNameId();
-
+        return $this->auth->getNameId();
     }
 
     /**
@@ -35,9 +26,7 @@ class Saml2User
      */
     function getAttributes()
     {
-        $auth = $this->auth;
-
-        return $auth->getAttributes();
+        return $this->auth->getAttributes();
     }
 
     /**
@@ -47,9 +36,7 @@ class Saml2User
      * @return array|null Requested SAML attribute ($name).
      */
     function getAttribute($name) {
-        $auth = $this->auth;
-
-        return $auth->getAttribute($name);
+        return $this->auth->getAttribute($name);
     }
 
     /**
@@ -80,10 +67,10 @@ class Saml2User
      * @return array|null
      */
     function parseUserAttribute($samlAttribute = null, $propertyName = null) {
-        if(empty($samlAttribute)) {
+        if (empty($samlAttribute)) {
             return null;
         }
-        if(empty($propertyName)) {
+        if (empty($propertyName)) {
             return $this->getAttribute($samlAttribute);
         }
 

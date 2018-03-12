@@ -12,10 +12,6 @@ use Psr\Log\InvalidArgumentException;
 
 class Saml2Auth
 {
-
-    /**
-     * @var \OneLogin_Saml2_Auth
-     */
     protected $auth;
 
     protected $samlAssertion;
@@ -30,9 +26,7 @@ class Saml2Auth
      */
     function isAuthenticated()
     {
-        $auth = $this->auth;
-
-        return $auth->isAuthenticated();
+        return $this->auth->isAuthenticated();
     }
 
     /**
@@ -66,11 +60,15 @@ class Saml2Auth
      *
      * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      */
-    function login($returnTo = null, $parameters = array(), $forceAuthn = false, $isPassive = false, $stay = false, $setNameIdPolicy = true)
-    {
-        $auth = $this->auth;
-
-        return $auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
+    function login(
+        $returnTo = null,
+        $parameters = array(),
+        $forceAuthn = false,
+        $isPassive = false,
+        $stay = false,
+        $setNameIdPolicy = true
+    ) {
+        return $this->auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
     }
 
     /**
@@ -88,9 +86,7 @@ class Saml2Auth
      */
     function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
     {
-        $auth = $this->auth;
-
-        $auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
+        $this->auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 Route::group([
     'prefix' => config('saml2.routesPrefix'),
-    'middleware' => array_merge(config('saml2.routesMiddleware'), [ 'samlSubdomain' ]),
+    'middleware' => array_merge(config('saml2.routesMiddleware'), [ 'samlsubdomain' ]),
     'domain' => '{subdomain}'.config('saml2.routesDomain')
 ], function () {
 

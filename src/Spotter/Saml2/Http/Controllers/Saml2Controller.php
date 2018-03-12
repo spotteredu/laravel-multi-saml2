@@ -28,7 +28,6 @@ class Saml2Controller extends Controller
      */
     public function metadata($subdomain)
     {
-
         $metadata = $this->saml2Auth->getMetadata();
 
         return response($metadata, 200, ['Content-Type' => 'text/xml']);
