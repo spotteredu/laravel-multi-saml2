@@ -23,7 +23,9 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        include __DIR__ . '/../../routes.php';
+        if (config('saml2', false)) {
+            include __DIR__ . '/../../routes.php';
+        }
 
         $this->app['router']->middleware('samlSubdomain', SubdomainBindSaml::class);
 
