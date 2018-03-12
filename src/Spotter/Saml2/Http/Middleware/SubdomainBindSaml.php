@@ -24,12 +24,11 @@ class SubdomainBindSaml
         $subdomain = $request->subdomain;
         $idpResolver = $this->getIdpResolver();
         $idpSettings = call_user_func([$idpResolver, 'idpSettings'], $subdomain);
-        $spSettings = $this->getBaseSettings();
+        $spSettings = $this->getBaseSettings($subdomain);
 
         $settings = array_merge($spSettings, [ 'idp' => $idpSettings ]);
         $saml2 = new OneLogin_Saml2_Auth($settings);
-        app()->instance(Saml2Auth::class, new Saml2Auth($saml2));
-
+        $request->saml2Auth = new Saml2Auth($saml2);
         return $next($request);
     }
 
@@ -41,17 +40,17 @@ class SubdomainBindSaml
         throw new \Exception('Invalid IdpResolver implementation');
     }
 
-    protected function getBaseSettings() {
+    protected function getBaseSettings($subdomain) {
         $config = config('saml2');
         if (empty($config['sp']['entityId'])) {
-            $config['sp']['entityId'] = URL::route('saml_metadata');
+            $config['sp']['entityId'] = URL::route('saml_metadata', [ 'subdomain' => $subdomain ]);
         }
         if (empty($config['sp']['assertionConsumerService']['url'])) {
-            $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
+            $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs', [ 'subdomain' => $subdomain ]);
         }
         if (!empty($config['sp']['singleLogoutService']) &&
             empty($config['sp']['singleLogoutService']['url'])) {
-            $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
+            $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls', [ 'subdomain' => $subdomain ]);
         }
         if (strpos($config['sp']['privateKey'], 'file://')===0) {
             $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);

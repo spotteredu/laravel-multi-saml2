@@ -10,25 +10,13 @@ use Illuminate\Http\Request;
 
 class Saml2Controller extends Controller
 {
-
-    protected $saml2Auth;
-
-    /**
-     * @param Saml2Auth $saml2Auth injected.
-     */
-    function __construct(Saml2Auth $saml2Auth)
-    {
-        $this->saml2Auth = $saml2Auth;
-    }
-
-
     /**
      * Generate local sp metadata
      * @return \Illuminate\Http\Response
      */
-    public function metadata($subdomain)
+    public function metadata(Request $request)
     {
-        $metadata = $this->saml2Auth->getMetadata();
+        $metadata = $request->saml2Auth->getMetadata();
 
         return response($metadata, 200, ['Content-Type' => 'text/xml']);
     }
@@ -37,29 +25,29 @@ class Saml2Controller extends Controller
      * Process an incoming saml2 assertion request.
      * Fires 'Saml2LoginEvent' event if a valid user is Found
      */
-    public function acs($subdomain)
+    public function acs(Request $request)
     {
-        $errors = $this->saml2Auth->acs();
+        $saml2Auth = $request->saml2Auth;
+        $errors = $saml2Auth->acs();
 
         if (!empty($errors)) {
-            logger()->error('Saml2 error_detail', ['error' => $this->saml2Auth->getLastErrorReason()]);
-            session()->flash('saml2_error_detail', [$this->saml2Auth->getLastErrorReason()]);
+            logger()->error('saml2 error_detail', ['error' => $saml2Auth->getLastErrorReason()]);
+            session()->flash('saml2_error_detail', [$saml2Auth->getLastErrorReason()]);
 
-            logger()->error('Saml2 error', $errors);
+            logger()->error('saml2 error', $errors);
             session()->flash('saml2_error', $errors);
-            return redirect(config('saml2_settings.errorRoute'));
+            return redirect(config('saml2.errorRoute'));
         }
-        $user = $this->saml2Auth->getSaml2User();
-
-        event(new Saml2LoginEvent($user, $this->saml2Auth));
+        $user = $saml2Auth->getSaml2User();
+        event(new Saml2LoginEvent($user, $saml2Auth));
 
         $redirectUrl = $user->getIntendedUrl();
 
         if ($redirectUrl !== null) {
             return redirect($redirectUrl);
-        } else {
-
-            return redirect(config('saml2_settings.loginRoute'));
+        }
+        else {
+            return redirect(config('saml2.loginRoute'));
         }
     }
 
@@ -68,35 +56,33 @@ class Saml2Controller extends Controller
      * Fires 'saml2.logoutRequestReceived' event if its valid.
      * This means the user logged out of the SSO infrastructure, you 'should' log him out locally too.
      */
-    public function sls($subdomain)
+    public function sls(Request $request)
     {
-        $error = $this->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'));
+        $error = $request->saml2Auth->sls(config('saml2.retrieveParametersFromServer'));
         if (!empty($error)) {
             throw new \Exception("Could not log out");
         }
 
-        return redirect(config('saml2_settings.logoutRoute')); //may be set a configurable default
+        return redirect(config('saml2.logoutRoute')); //may be set a configurable default
     }
 
     /**
      * This initiates a logout request across all the SSO infrastructure.
      */
-    public function logout($subdomain, Request $request)
+    public function logout(Request $request)
     {
         $returnTo = $request->query('returnTo');
         $sessionIndex = $request->query('sessionIndex');
         $nameId = $request->query('nameId');
-        $this->saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
-        //does not return
+        $request->saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
     }
 
 
     /**
      * This initiates a login request
      */
-    public function login($subdomain)
+    public function login(Request $request)
     {
-        $this->saml2Auth->login(config('saml2_settings.loginRoute'));
+        $request->saml2Auth->login(config('saml2_settings.loginRoute'));
     }
-
 }
