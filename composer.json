@@ -4,7 +4,7 @@
     "keywords": ["laravel","saml", "saml2", "subdomain", "onelogin"],
     "homepage": "https://github.com/spotteredu/laravel-saml2",
     "license": "MIT",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "authors": [
         {
             "name": "Chris Anderson",
