@@ -2,9 +2,13 @@
 
 Route::group([
     'prefix' => config('saml2.routesPrefix'),
-    'middleware' => array_merge(config('saml2.routesMiddleware'), [ 'samlsubdomain' ]),
-    'domain' => '{subdomain}'.config('saml2.routesDomain')
+    'middleware' => [ 'saml' ],
+    'domain' => '{subdomain}.'.config('saml2.routesDomain')
 ], function () {
+
+    Route::get('/other', function() {
+        return "bitch please";
+    });
 
     Route::get('/logout', [
         'as' => 'saml_logout',
@@ -15,7 +19,7 @@ Route::group([
         'as' => 'saml_login',
         'uses' => 'Spotter\Saml2\Http\Controllers\Saml2Controller@login',
     ]);
-
+        
     Route::get('/metadata', [
         'as' => 'saml_metadata',
         'uses' => 'Spotter\Saml2\Http\Controllers\Saml2Controller@metadata',

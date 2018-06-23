@@ -147,7 +147,7 @@ class Saml2Auth
         $settings = $auth->getSettings();
         $metadata = $settings->getSPMetadata();
         $errors = $settings->validateMetadata($metadata);
-
+        
         if (empty($errors)) {
 
             return $metadata;

@@ -2,7 +2,8 @@
 
 namespace Spotter\Saml2;
 
-use OneLogin_Saml2_Auth;
+use Log;
+// use OneLogin_Saml2_Auth;
 use Spotter\Saml2\Http\Middleware\SubdomainBindSaml;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,8 +27,7 @@ class Saml2ServiceProvider extends ServiceProvider
         if (config('saml2', false)) {
             include __DIR__ . '/../../routes.php';
         }
-
-        $this->app['router']->middleware('samlsubdomain', SubdomainBindSaml::class);
+        $this->app['router']->middleware('saml', SubdomainBindSaml::class);
 
         $this->publishes([
             __DIR__.'/../../config/saml2.php' => config_path('saml2.php'),
