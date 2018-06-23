@@ -33,12 +33,9 @@ class Saml2Controller extends Controller
         $errors = $request->saml2Auth->acs();
 
         if (!empty($errors)) {
-            logger()->error('Saml2 error_detail', ['error' => $request->saml2Auth->getLastErrorReason()]);
-            session()->flash('saml2_error_detail', [$request->saml2Auth->getLastErrorReason()]);
-
-            logger()->error('Saml2 error', $errors);
-            session()->flash('saml2_error', $errors);
-            return redirect(config('saml2_settings.errorRoute'));
+            logger()->error('saml2 error_detail', [ 'error' => $request->saml2Auth->getLastErrorReason() ]);
+            logger()->error('saml2 error', $errors);
+            return redirect(config('saml2.errorRoute'));
         }
         
         $user = $request->saml2Auth->getSaml2User();
@@ -46,14 +43,18 @@ class Saml2Controller extends Controller
 
         $redirectUrl = $user->getIntendedUrl();
 
-        App::call(config('saml2.loginHandler'), [ $event, $subdomain ]);
+        if (config('saml2.loginHandler', null)) {
+            return App::call(config('saml2.loginHandler'), [ $event, $subdomain ]);
+        }
 
-        // if ($redirectUrl !== null) {
-        //     return redirect($redirectUrl);
-        // } 
-        // else {
-        //     return redirect(config('saml2_settings.loginRoute'));
-        // }
+        event(new Saml2LoginEvent($user, $saml2Auth));
+
+        if ($redirectUrl !== null) {
+            return redirect($redirectUrl);
+        } 
+        else {
+            return redirect(config('saml2.loginRoute'));
+        }
     }
 
     /**
@@ -63,12 +64,12 @@ class Saml2Controller extends Controller
      */
     public function sls(Request $request, $subdomain)
     {
-        $error = $request->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'));
+        $error = $request->saml2Auth->sls(config('saml2.retrieveParametersFromServer'));
         if (!empty($error)) {
             throw new \Exception("Could not log out");
         }
 
-        return redirect(config('saml2_settings.logoutRoute')); //may be set a configurable default
+        return redirect(config('saml2.logoutRoute')); //may be set a configurable default
     }
 
     /**
@@ -89,6 +90,6 @@ class Saml2Controller extends Controller
      */
     public function login(Request $request, $subdomain)
     {
-        $request->saml2Auth->login(config('saml2_settings.loginRoute'));
+        $request->saml2Auth->login(config('saml2.loginRoute'));
     }
 }

@@ -147,12 +147,12 @@ class Saml2Auth
         $settings = $auth->getSettings();
         $metadata = $settings->getSPMetadata();
         $errors = $settings->validateMetadata($metadata);
-        
+
         if (empty($errors)) {
 
             return $metadata;
-        } else {
-
+        } 
+        else {
             throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
                 OneLogin_Saml2_Error::METADATA_SP_INVALID

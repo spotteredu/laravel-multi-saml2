@@ -9,5 +9,5 @@ interface IdpResolver
      *
      * @return mixed|null
      */
-    public static function idpSettings();
+    public static function idpSettings($subdomain);
 }
