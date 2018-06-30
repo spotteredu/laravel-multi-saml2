@@ -2,7 +2,6 @@
 
 namespace Spotter\Saml2\Http\Controllers;
 
-use Log;
 use App;
 use Spotter\Saml2\Events\Saml2LoginEvent;
 use Spotter\Saml2\Saml2Auth;

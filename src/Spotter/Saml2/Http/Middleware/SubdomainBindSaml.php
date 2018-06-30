@@ -6,7 +6,9 @@ use Log;
 use URL;
 use Config;
 use Closure;
-use OneLogin_Saml2_Auth;
+
+use OneLogin\Saml2\Auth;
+
 use Spotter\Saml2\Saml2Auth;
 use Spotter\Saml2\Contracts\IdpResolver;
 
@@ -29,7 +31,7 @@ class SubdomainBindSaml
         $spSettings = $this->getBaseSettings($subdomain);
 
         $settings = array_merge($spSettings, [ 'idp' => $idpSettings ]);
-        $saml2 = new OneLogin_Saml2_Auth($settings);
+        $saml2 = new Auth($settings);
         // app()->instance(Saml2Auth::class, new Saml2Auth($saml2));
 
         $request->saml2Auth = new Saml2Auth($saml2);
